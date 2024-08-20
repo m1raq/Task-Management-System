@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: taskManagementSystem
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_management_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+security:
+  jwt:
+    expiration: 60000000
+    secret: secretKeyjsdjpafjlw3ejk323423zdfasfqweqweadasfsdfzxcxzcaqwsedrfqwerffdadsfabvfgqrtyertuyulyjkhj
+    jwtRefreshExpirationMs: 120000
