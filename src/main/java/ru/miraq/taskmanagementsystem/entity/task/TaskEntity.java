@@ -1,9 +1,14 @@
 package ru.miraq.taskmanagementsystem.entity.task;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import ru.miraq.taskmanagementsystem.entity.user.UserEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,5 +41,11 @@ public class TaskEntity {
     @ManyToOne()
     @JoinColumn(name = "executor_id")
     private UserEntity executor;
+
+    @OneToMany(mappedBy = "task")
+    @Column(name = "comments")
+    private List<CommentEntity> comments;
+
+
 
 }

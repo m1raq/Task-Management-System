@@ -1,9 +1,12 @@
-package ru.miraq.taskmanagementsystem.dto;
+package ru.miraq.taskmanagementsystem.dto.task;
 
 import lombok.Data;
+import ru.miraq.taskmanagementsystem.dto.comment.CommentDTO;
+import ru.miraq.taskmanagementsystem.dto.user.UserDTO;
 import ru.miraq.taskmanagementsystem.entity.task.TaskPriority;
 import ru.miraq.taskmanagementsystem.entity.task.TaskStatus;
-import ru.miraq.taskmanagementsystem.entity.user.UserEntity;
+
+import java.util.List;
 
 @Data
 public class TaskDTO {
@@ -21,4 +24,6 @@ public class TaskDTO {
     private UserDTO author;
 
     private UserDTO executor;
+
+    private List<CommentDTO> comments;
 }

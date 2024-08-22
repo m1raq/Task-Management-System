@@ -1,20 +1,39 @@
 package ru.miraq.taskmanagementsystem.service;
 
-import ru.miraq.taskmanagementsystem.dto.TaskDTO;
+import ru.miraq.taskmanagementsystem.dto.task.CreateTaskDTO;
+import ru.miraq.taskmanagementsystem.dto.task.GetTaskDTO;
+import ru.miraq.taskmanagementsystem.dto.task.TaskDTO;
+import ru.miraq.taskmanagementsystem.dto.task.UpdateTaskDTO;
+import ru.miraq.taskmanagementsystem.entity.task.TaskEntity;
+import ru.miraq.taskmanagementsystem.entity.task.TaskStatus;
+import ru.miraq.taskmanagementsystem.exception.CreateTaskException;
+import ru.miraq.taskmanagementsystem.exception.InputParamException;
+import ru.miraq.taskmanagementsystem.exception.TaskNotFoundException;
 
 import java.util.List;
 
+
 public interface TaskService {
 
-    void createTask(TaskDTO taskDTO, String email);
+    void createTask(CreateTaskDTO createTaskDTO, String email) throws CreateTaskException;
 
-    void updateTask(TaskDTO taskDTO);
+    void updateTask(UpdateTaskDTO updateTaskDTO, String ownerEmail);
 
-    void deleteTaskById(Long id);
+    void setExecutor(String executorEmail, String taskName, String ownEmail) throws TaskNotFoundException;
 
-    void setExecutor(String executorEmail, Long taskId);
+    List<GetTaskDTO> getOwnTasks(String ownerEmail);
 
-    TaskDTO getTaskById(Long id);
+    List<GetTaskDTO> getSomeoneTasks(String ownerEmail);
 
-    List<TaskDTO> getAllTasks();
+    void deleteTask(String taskName, String ownerEmail);
+
+    void updateTaskStatus(String taskName, TaskStatus taskStatus, String executorEmail) throws TaskNotFoundException;
+
+    List<GetTaskDTO> getTasksByEmail(String email, String sortType) throws InputParamException;
+
+    List<GetTaskDTO> getOwnTasksInProgress(String ownerEmail);
+
+    TaskEntity getTaskByName(String taskName);
+
+
 }

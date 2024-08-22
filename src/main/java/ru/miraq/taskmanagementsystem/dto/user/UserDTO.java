@@ -1,8 +1,8 @@
-package ru.miraq.taskmanagementsystem.dto;
+package ru.miraq.taskmanagementsystem.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.miraq.taskmanagementsystem.entity.task.TaskEntity;
+import ru.miraq.taskmanagementsystem.dto.task.TaskDTO;
 import ru.miraq.taskmanagementsystem.entity.user.RoleType;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class UserDTO {
 
     private List<RoleType> role;
 
-    private List<TaskEntity> task;
+    private List<TaskDTO> task;
 
-    private List<TaskEntity> taskInProgress;
+    private List<TaskDTO> taskInProgress;
 }

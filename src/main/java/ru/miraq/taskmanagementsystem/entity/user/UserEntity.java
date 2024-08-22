@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import ru.miraq.taskmanagementsystem.entity.task.CommentEntity;
 import ru.miraq.taskmanagementsystem.entity.task.TaskEntity;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class UserEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "password")
@@ -38,4 +39,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "executor")
     private List<TaskEntity> taskInProgress;
+
+    @OneToMany(mappedBy = "author")
+    private List<CommentEntity> comments;
 }
