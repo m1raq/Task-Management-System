@@ -1,11 +1,21 @@
-version: "3.9"
+version: '3.9'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres
     environment:
-      POSTGRES_DB: task_management_db
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=task_management_db
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "8081:8081"
+  app:
+    build: .
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - db
