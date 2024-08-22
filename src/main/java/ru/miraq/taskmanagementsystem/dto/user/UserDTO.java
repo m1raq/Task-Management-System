@@ -7,7 +7,7 @@ import ru.miraq.taskmanagementsystem.entity.user.RoleType;
 
 import java.util.List;
 
-@Schema(name = "Сущность пользователя")
+
 @Data
 public class UserDTO {
 

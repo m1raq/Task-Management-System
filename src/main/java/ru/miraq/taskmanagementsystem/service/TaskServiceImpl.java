@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.miraq.taskmanagementsystem.dto.comment.GetCommentDTO;
 import ru.miraq.taskmanagementsystem.dto.task.*;
-import ru.miraq.taskmanagementsystem.dto.user.UserDTO;
 import ru.miraq.taskmanagementsystem.entity.task.TaskEntity;
 import ru.miraq.taskmanagementsystem.entity.task.TaskStatus;
 import ru.miraq.taskmanagementsystem.entity.user.UserEntity;
@@ -39,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void createTask(CreateTaskDTO createTaskDTO, String email) throws CreateTaskException {
         if(createTaskDTO.getName().isEmpty() || createTaskDTO.getDescription().isEmpty()) {
-            throw new CreateTaskException("Заполните поля - Название и Описание");
+            throw new CreateTaskException("Заполните поля - Название, Описание и Приоритетность");
         }
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setName(createTaskDTO.getName());
@@ -214,20 +213,6 @@ public class TaskServiceImpl implements TaskService {
                         .author(task.getAuthor().getEmail())
                         .build())
                 .toList();
-    }
-
-    private List<GetCommentDTO> getCommentsDTO(TaskDTO task){
-        try {
-            return task.getComments()
-                    .stream()
-                    .map(comment -> GetCommentDTO.builder()
-                            .comment(comment.getText())
-                            .author(task.getAuthor().getEmail())
-                            .build())
-                    .toList();
-        } catch (NullPointerException e) {
-            return new ArrayList<>();
-        }
     }
 
 

@@ -2,7 +2,6 @@ package ru.miraq.taskmanagementsystem.service;
 
 import ru.miraq.taskmanagementsystem.dto.task.CreateTaskDTO;
 import ru.miraq.taskmanagementsystem.dto.task.GetTaskDTO;
-import ru.miraq.taskmanagementsystem.dto.task.TaskDTO;
 import ru.miraq.taskmanagementsystem.dto.task.UpdateTaskDTO;
 import ru.miraq.taskmanagementsystem.entity.task.TaskEntity;
 import ru.miraq.taskmanagementsystem.entity.task.TaskStatus;
