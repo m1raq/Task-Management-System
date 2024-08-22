@@ -9,3 +9,12 @@ services:
       - POSTGRES_DB=task_management_db
     ports:
       - "5432:5432"
+  app:
+    build: .
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    command: java -jar target/task-management-system.jar
