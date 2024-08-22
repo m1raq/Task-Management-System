@@ -1,6 +1,6 @@
 package ru.miraq.taskmanagementsystem.dto.user;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+
 import lombok.Data;
 import ru.miraq.taskmanagementsystem.dto.task.TaskDTO;
 import ru.miraq.taskmanagementsystem.entity.user.RoleType;
