@@ -61,6 +61,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         taskDTO.setName(updateTaskDTO.getName());
         taskDTO.setDescription(updateTaskDTO.getDescription());
+        taskDTO.setStatus(updateTaskDTO.getTaskStatus());
         taskDTO.setPriority(updateTaskDTO.getPriority());
         if (updateTaskDTO.getExecutorEmail().equals("1")) {
             taskDTO.setExecutor(null);

@@ -87,6 +87,11 @@ public class TaskController {
                    В теле запроса введите id задачи, которую необходимо отредактировать
                    и поля, которые необходимо изменить.
                    
+                   Варианты поля status:\s
+                   - WAITING
+                   - IN_PROGRESS
+                   - COMPLETED
+                   
                    Варианты поля priority:\s
                    - LOW
                    - MEDIUM
