@@ -59,7 +59,6 @@ public class SecurityService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     public AuthResponseDTO authenticateUser(AuthRequestDTO authRequestDTO){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequestDTO.getEmail(),
@@ -99,6 +98,11 @@ public class SecurityService {
 
         try {
             user = userService.getUserByEmail(authRequestDTO.getEmail());
+            try {
+                authenticateUser(authRequestDTO);
+            } catch (Exception e){
+                throw new CredentialsPatternException(e.getMessage());
+            }
             List<RoleType> userRoles = user.getRole();
             if (userRoles.contains(role)) {
                 return;
