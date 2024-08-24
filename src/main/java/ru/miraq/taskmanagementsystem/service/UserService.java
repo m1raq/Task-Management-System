@@ -7,4 +7,6 @@ public interface UserService {
 
     UserDTO getUserByEmail(String email);
 
+    boolean existByEmail(String email);
+
 }

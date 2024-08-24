@@ -25,6 +25,7 @@ import ru.miraq.taskmanagementsystem.security.entity.RefreshTokenEntity;
 import ru.miraq.taskmanagementsystem.security.jwt.JwtUtils;
 import ru.miraq.taskmanagementsystem.security.jwt.RefreshTokenService;
 import ru.miraq.taskmanagementsystem.security.user.UserDetailsImpl;
+import ru.miraq.taskmanagementsystem.service.UserService;
 import ru.miraq.taskmanagementsystem.service.UserServiceImpl;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class SecurityService {
 
     private final UserMapper userMapper;
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -82,7 +83,7 @@ public class SecurityService {
 
 
     public void register(AuthRequestDTO authRequestDTO, RoleType role) throws CredentialsPatternException {
-        log.info("Попытка регистрации под адресом{}", authRequestDTO.getEmail());
+        log.info("Попытка регистрации под адресом {}", authRequestDTO.getEmail());
         UserDTO user;
         String emailRegex = ".+@[a-zA-Z]+\\.com|.+@[a-zA-Z]+\\.ru";
 
@@ -94,6 +95,11 @@ public class SecurityService {
                 || authRequestDTO.getPassword().isBlank()
                 || authRequestDTO.getPassword().length() < 3){
             throw new CredentialsPatternException("Длина пароля должна быть больше 3 символов");
+        } else if ((userService.existByEmail(authRequestDTO.getEmail())
+                && userService.getUserByEmail(authRequestDTO.getEmail())
+                .getRole()
+                .contains(role))){
+            throw new CredentialsPatternException("Пользователь с таким email уже существует");
         }
 
         try {
