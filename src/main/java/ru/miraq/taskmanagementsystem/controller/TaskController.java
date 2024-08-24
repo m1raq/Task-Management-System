@@ -11,22 +11,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.miraq.taskmanagementsystem.dto.ResponseMessageDTO;
 import ru.miraq.taskmanagementsystem.dto.task.CreateTaskDTO;
-import ru.miraq.taskmanagementsystem.dto.task.GetTaskDTO;
 import ru.miraq.taskmanagementsystem.dto.task.UpdateTaskDTO;
 import ru.miraq.taskmanagementsystem.entity.task.TaskStatus;
 import ru.miraq.taskmanagementsystem.exception.CreateTaskException;
 import ru.miraq.taskmanagementsystem.exception.InputParamException;
 import ru.miraq.taskmanagementsystem.exception.TaskNotFoundException;
+import ru.miraq.taskmanagementsystem.service.TaskService;
 import ru.miraq.taskmanagementsystem.service.TaskServiceImpl;
 
-import java.util.List;
 
 @Tag(name = "Задачи", description = "Контроллер для работы с задачами")
 @RequestMapping("/api/task")
 @RestController
 public class TaskController {
 
-    private final TaskServiceImpl taskService;
+    private final TaskService taskService;
 
     @Autowired
     public TaskController(TaskServiceImpl taskService) {
@@ -106,10 +105,19 @@ public class TaskController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "JWT")
     @PutMapping("/update-task")
-    public ResponseEntity<HttpStatus> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO
+    public ResponseEntity<?> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO
             , Authentication authentication){
-        taskService.updateTask(updateTaskDTO, authentication.getName());
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            taskService.updateTask(updateTaskDTO, authentication.getName());
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message("Задача успешно обновлена")
+                    .build()
+                    , HttpStatus.OK);
+        } catch (TaskNotFoundException e) {
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message(e.getMessage())
+                    .build(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(
@@ -118,8 +126,14 @@ public class TaskController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/get-own-tasks")
-    public ResponseEntity<List<GetTaskDTO>> getOwnTasks(Authentication authentication){
-        return new ResponseEntity<>(taskService.getOwnTasks(authentication.getName()), HttpStatus.OK);
+    public ResponseEntity<?> getOwnTasks(Authentication authentication){
+        try {
+            return new ResponseEntity<>(taskService.getOwnTasks(authentication.getName()), HttpStatus.OK);
+        } catch (TaskNotFoundException e) {
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message(e.getMessage())
+                    .build(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(
@@ -129,9 +143,20 @@ public class TaskController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "JWT")
     @DeleteMapping("/delete-task")
-    public ResponseEntity<HttpStatus> deleteTask(@RequestParam String taskName, Authentication authentication){
-        taskService.deleteTask(taskName, authentication.getName());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ResponseMessageDTO> deleteTask(@RequestParam String taskName
+            , Authentication authentication){
+        try {
+            taskService.deleteTask(taskName, authentication.getName());
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message("Задача успешно удалена")
+                    .build()
+                    ,HttpStatus.NO_CONTENT);
+        } catch (Exception e){
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message("Задача " + taskName + " не найдена")
+                    .build()
+                    , HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(
@@ -140,8 +165,14 @@ public class TaskController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/get-someone-tasks")
-    public ResponseEntity<List<GetTaskDTO>> getSomeoneTasks(Authentication authentication){
-        return new ResponseEntity<>(taskService.getSomeoneTasks(authentication.getName()), HttpStatus.OK);
+    public ResponseEntity<?> getSomeoneTasks(Authentication authentication){
+        try {
+            return new ResponseEntity<>(taskService.getSomeoneTasks(authentication.getName()), HttpStatus.OK);
+        } catch (TaskNotFoundException e) {
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message(e.getMessage())
+                    .build(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(
@@ -192,6 +223,9 @@ public class TaskController {
             return new ResponseEntity<>(ResponseMessageDTO.builder()
                     .message(e.getMessage())
                     .build(), HttpStatus.BAD_REQUEST);
+        } catch (TaskNotFoundException e){
+            return new ResponseEntity<>(ResponseMessageDTO.builder().message(e.getMessage()).build()
+                    , HttpStatus.NOT_FOUND);
         }
     }
 
@@ -199,8 +233,15 @@ public class TaskController {
     @PreAuthorize("hasAnyRole('EXECUTOR')")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/get-own-tasks-in-progress")
-    public ResponseEntity<List<GetTaskDTO>> getOwnTaskInProgress(Authentication authentication) {
-        return new ResponseEntity<>(taskService.getOwnTasksInProgress(authentication.getName()), HttpStatus.OK);
+    public ResponseEntity<?> getOwnTaskInProgress(Authentication authentication) {
+        try {
+            return new ResponseEntity<>(taskService.getOwnTasksInProgress(authentication.getName()), HttpStatus.OK);
+        } catch (TaskNotFoundException e) {
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message(e.getMessage())
+                    .build()
+                    , HttpStatus.NOT_FOUND);
+        }
     }
 
 

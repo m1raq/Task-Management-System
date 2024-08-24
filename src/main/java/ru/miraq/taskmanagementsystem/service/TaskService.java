@@ -16,23 +16,23 @@ public interface TaskService {
 
     void createTask(CreateTaskDTO createTaskDTO, String email) throws CreateTaskException;
 
-    void updateTask(UpdateTaskDTO updateTaskDTO, String ownerEmail);
+    void updateTask(UpdateTaskDTO updateTaskDTO, String ownerEmail) throws TaskNotFoundException;
 
     void setExecutor(String executorEmail, String taskName, String ownEmail) throws TaskNotFoundException;
 
-    List<GetTaskDTO> getOwnTasks(String ownerEmail);
+    List<GetTaskDTO> getOwnTasks(String ownerEmail) throws TaskNotFoundException;
 
-    List<GetTaskDTO> getSomeoneTasks(String ownerEmail);
+    List<GetTaskDTO> getSomeoneTasks(String ownerEmail) throws TaskNotFoundException;
 
     void deleteTask(String taskName, String ownerEmail);
 
     void updateTaskStatus(String taskName, TaskStatus taskStatus, String executorEmail) throws TaskNotFoundException;
 
-    List<GetTaskDTO> getTasksByEmail(String email, String sortType) throws InputParamException;
+    List<GetTaskDTO> getTasksByEmail(String email, String sortType) throws InputParamException, TaskNotFoundException;
 
-    List<GetTaskDTO> getOwnTasksInProgress(String ownerEmail);
+    List<GetTaskDTO> getOwnTasksInProgress(String ownerEmail) throws TaskNotFoundException;
 
-    TaskEntity getTaskByName(String taskName);
+    TaskEntity getTaskByName(String taskName) throws TaskNotFoundException;
 
 
 }

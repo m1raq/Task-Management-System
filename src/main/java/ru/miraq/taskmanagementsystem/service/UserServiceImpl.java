@@ -1,5 +1,6 @@
 package ru.miraq.taskmanagementsystem.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import ru.miraq.taskmanagementsystem.mapper.UserMapper;
 import ru.miraq.taskmanagementsystem.repository.UserRepository;
 
 
-
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserByEmail(String email) {
         return userMapper.toDTO(userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email)));
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь " + email + " не найден")));
     }
 
 }

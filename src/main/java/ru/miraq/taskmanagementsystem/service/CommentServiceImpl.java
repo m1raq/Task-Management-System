@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.miraq.taskmanagementsystem.dto.comment.CommentDTO;
 import ru.miraq.taskmanagementsystem.dto.task.TaskDTO;
+import ru.miraq.taskmanagementsystem.exception.TaskNotFoundException;
 import ru.miraq.taskmanagementsystem.mapper.CommentMapper;
 import ru.miraq.taskmanagementsystem.repository.CommentRepository;
 
@@ -12,11 +13,11 @@ import ru.miraq.taskmanagementsystem.repository.CommentRepository;
 @Service
 public class CommentServiceImpl implements CommentService{
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     private final CommentMapper commentMapper;
 
-    private final TaskServiceImpl taskService;
+    private final TaskService taskService;
 
     private final CommentRepository commentRepository;
 
@@ -29,7 +30,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void createComment(String taskName, String ownerEmail, String text) {
+    public void createComment(String taskName, String ownerEmail, String text) throws TaskNotFoundException {
         CommentDTO commentDTO = new CommentDTO();
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(taskService.getTaskByName(taskName).getId());
