@@ -1,8 +1,7 @@
 package ru.miraq.taskmanagementsystem.exception;
 
-import java.util.function.Supplier;
 
-public class TaskNotFoundException extends Exception {
+public class TaskNotFoundException extends RuntimeException {
     public TaskNotFoundException(String message){
         super(message);
     }
