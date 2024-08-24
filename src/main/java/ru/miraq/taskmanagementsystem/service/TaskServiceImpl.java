@@ -2,6 +2,7 @@ package ru.miraq.taskmanagementsystem.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.miraq.taskmanagementsystem.dto.comment.GetCommentDTO;
 import ru.miraq.taskmanagementsystem.dto.task.*;
@@ -36,7 +37,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void createTask(CreateTaskDTO createTaskDTO, String email) throws CreateTaskException {
+    public void createTask(CreateTaskDTO createTaskDTO, String email) {
         if(createTaskDTO.getName().isEmpty() || createTaskDTO.getDescription().isEmpty()) {
             throw new CreateTaskException("Заполните поля - Название, Описание и Приоритетность");
         }
@@ -53,7 +54,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void updateTask(UpdateTaskDTO updateTaskDTO, String ownerEmail) throws TaskNotFoundException {
+    public void updateTask(UpdateTaskDTO updateTaskDTO, String ownerEmail) {
         TaskDTO taskDTO = userService.getUserByEmail(ownerEmail)
                 .getTask().stream()
                 .filter(task -> task.getName().equals(updateTaskDTO.getName()))
@@ -90,7 +91,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void setExecutor(String executorEmail, String taskName, String ownEmail) throws TaskNotFoundException {
+    public void setExecutor(String executorEmail, String taskName, String ownEmail) {
         TaskDTO taskDTO = userService.getUserByEmail(ownEmail)
                 .getTask()
                 .stream()
@@ -107,12 +108,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<GetTaskDTO> getOwnTasks(String ownerEmail) throws TaskNotFoundException {
+    public List<GetTaskDTO> getOwnTasks(String ownerEmail) {
         ArrayList<GetTaskDTO> ownTasks = new ArrayList<>();
         taskRepository.findByAuthorEmail(ownerEmail)
                 .orElseThrow(() -> {
                     log.error("Неуспешная попытка получения задач пользователя {}", ownerEmail);
-                    return new TaskNotFoundException("Задачи не найдены");
+                    return new TaskNotFoundException("Задачи не найдены. Ошибка на сервере.");
                 })
                 .forEach(task -> ownTasks.add(GetTaskDTO.builder()
                         .name(task.getName())
@@ -128,10 +129,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<GetTaskDTO> getSomeoneTasks(String ownerEmail) throws TaskNotFoundException {
-        return taskRepository.findByAuthorEmailNot(ownerEmail)
+    public List<GetTaskDTO> getSomeoneTasks(String ownerEmail) {
+        List<GetTaskDTO> tasks = taskRepository.findByAuthorEmailNot(ownerEmail)
                 .orElseThrow(() -> {
-                    log.error("Неуспешная попытка получения задач других пользователей");
+                    log.error("Неуспешная попытка получения задач других пользователей. Ошибка на сервере.");
                     return new TaskNotFoundException("Задачи не найдены");
                 })
                 .stream()
@@ -145,11 +146,17 @@ public class TaskServiceImpl implements TaskService {
                         .commentDTO(getCommentsDTO(task))
                         .build())
                 .toList();
-
+        if(tasks.isEmpty()) {
+            throw new TaskNotFoundException("Задачи других пользователей не найдены");
+        }
+        return tasks;
     }
 
     @Override
     public void deleteTask(String taskName, String ownerEmail) {
+        if(existByName(taskName)){
+            throw new TaskNotFoundException("Задание с названием " + taskName + " не найдено");
+        }
         userService.getUserByEmail(ownerEmail).getTask()
                 .forEach(task -> {
                     if (task.getName().equals(taskName)) {
@@ -161,7 +168,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void updateTaskStatus(String taskName, TaskStatus taskStatus, String executorEmail) throws TaskNotFoundException {
+    public void updateTaskStatus(String taskName, TaskStatus taskStatus, String executorEmail) {
         TaskDTO taskDTO = userService.getUserByEmail(executorEmail)
                 .getTaskInProgress()
                 .stream()
@@ -176,7 +183,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<GetTaskDTO> getTasksByEmail(String email, String sortType) throws InputParamException, TaskNotFoundException {
+    public List<GetTaskDTO> getTasksByEmail(String email, String sortType) {
+        if(existByName(email)){
+            throw new UsernameNotFoundException("Пользователь "  + email + " не найден");
+        }
         if(sortType.equals("1")){
             return taskRepository.findByAuthorEmail(email)
                     .orElseThrow(() -> {
@@ -203,12 +213,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<GetTaskDTO> getOwnTasksInProgress(String ownerEmail) throws TaskNotFoundException {
+    public List<GetTaskDTO> getOwnTasksInProgress(String ownerEmail) {
         return getGetTaskDTOS(ownerEmail);
     }
 
     @Override
-    public TaskEntity getTaskByName(String taskName) throws TaskNotFoundException {
+    public TaskEntity getTaskByName(String taskName) {
         return taskRepository.findByName(taskName)
                 .orElseThrow(() -> {
                     log.error("Неуспешная попытка получения задания по имени {}", taskName);
@@ -216,7 +226,12 @@ public class TaskServiceImpl implements TaskService {
                 });
     }
 
-    private List<GetTaskDTO> getGetTaskDTOS(String ownerEmail) throws TaskNotFoundException {
+    @Override
+    public boolean existByName(String taskName) {
+        return !taskRepository.existsByName(taskName);
+    }
+
+    private List<GetTaskDTO> getGetTaskDTOS(String ownerEmail) {
         return taskRepository.findByExecutorEmail(ownerEmail)
                 .orElseThrow(() -> new TaskNotFoundException("Список заданий не найден"))
                 .stream()

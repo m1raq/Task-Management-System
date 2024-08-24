@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     Optional<List<TaskEntity>> findByExecutorEmail(String email);
 
+    boolean existsByName(String name);
+
 }
