@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import ru.miraq.taskmanagementsystem.dto.ResponseMessageDTO;
 import ru.miraq.taskmanagementsystem.dto.task.CreateTaskDTO;
@@ -77,6 +78,10 @@ public class TaskController {
         } catch (TaskNotFoundException e) {
             return new ResponseEntity<>(ResponseMessageDTO.builder()
                     .message("Задача не найдена"), HttpStatus.NOT_FOUND);
+        } catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message("Исполнитель " + executorEmail + " не найден")
+                    .build(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -117,6 +122,10 @@ public class TaskController {
             return new ResponseEntity<>(ResponseMessageDTO.builder()
                     .message(e.getMessage())
                     .build(), HttpStatus.NOT_FOUND);
+        } catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message("Исполнитель " + updateTaskDTO.getExecutorEmail() + " не найден")
+                    .build(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -151,7 +160,7 @@ public class TaskController {
                     .message("Задача успешно удалена")
                     .build()
                     ,HttpStatus.NO_CONTENT);
-        } catch (Exception e){
+        } catch (NullPointerException e){
             return new ResponseEntity<>(ResponseMessageDTO.builder()
                     .message("Задача " + taskName + " не найдена")
                     .build()

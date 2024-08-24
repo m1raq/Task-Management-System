@@ -63,10 +63,19 @@ public class TaskServiceImpl implements TaskService {
                     return new TaskNotFoundException("Задание с названием " + updateTaskDTO.getName()
                             + " не найдено");
                 });
-        taskDTO.setName(updateTaskDTO.getName());
-        taskDTO.setDescription(updateTaskDTO.getDescription());
-        taskDTO.setStatus(updateTaskDTO.getTaskStatus());
-        taskDTO.setPriority(updateTaskDTO.getPriority());
+
+        taskDTO.setName(updateTaskDTO.getName().isEmpty()
+                ? taskDTO.getName() : updateTaskDTO.getName());
+
+        taskDTO.setDescription(updateTaskDTO.getDescription().isEmpty()
+                ? taskDTO.getDescription() : updateTaskDTO.getDescription());
+
+        taskDTO.setStatus(updateTaskDTO.getTaskStatus() == null
+                ? taskDTO.getStatus() : updateTaskDTO.getTaskStatus());
+
+        taskDTO.setPriority(updateTaskDTO.getPriority() == null
+                ? taskDTO.getPriority() : updateTaskDTO.getPriority());
+
         if (updateTaskDTO.getExecutorEmail().equals("1")) {
             taskDTO.setExecutor(null);
             taskDTO.setStatus(TaskStatus.COMPLETED);

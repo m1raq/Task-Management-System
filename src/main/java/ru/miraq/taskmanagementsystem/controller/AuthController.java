@@ -51,7 +51,10 @@ public class AuthController {
                     .message("Регистрация прошла успешно")
                     .build(), HttpStatus.OK);
         } catch (CredentialsPatternException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(ResponseMessageDTO.builder()
+                    .message(e.getMessage())
+                    .build()
+                    , HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
