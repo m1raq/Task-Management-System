@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.miraq.taskmanagementsystem.dto.ResponseMessageDTO;
-import ru.miraq.taskmanagementsystem.exception.TaskNotFoundException;
 import ru.miraq.taskmanagementsystem.service.CommentService;
 import ru.miraq.taskmanagementsystem.service.CommentServiceImpl;
 
@@ -36,18 +35,12 @@ public class CommentController {
     public ResponseEntity<?> createComment(@RequestParam String taskName,
                                                     @RequestParam String text,
                                                     Authentication authentication){
-        try {
-            commentService.createComment(taskName, authentication.getName(), text);
-            return new ResponseEntity<>(ResponseMessageDTO.builder()
-                    .message("Комментарий успешно создан")
-                    .build()
-                    ,HttpStatus.OK);
-        } catch (TaskNotFoundException e) {
-            return new ResponseEntity<>(ResponseMessageDTO.builder()
-                    .message(e.getMessage())
-                    .build()
-                    ,HttpStatus.NOT_FOUND);
-        }
+        commentService.createComment(taskName, authentication.getName(), text);
+        return new ResponseEntity<>(ResponseMessageDTO.builder()
+                .message("Комментарий успешно создан")
+                .build()
+                ,HttpStatus.OK);
+
     }
 
 

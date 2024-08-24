@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.miraq.taskmanagementsystem.dto.ResponseMessageDTO;
 import ru.miraq.taskmanagementsystem.entity.user.RoleType;
-import ru.miraq.taskmanagementsystem.exception.CredentialsPatternException;
 import ru.miraq.taskmanagementsystem.security.dto.AuthRequestDTO;
 import ru.miraq.taskmanagementsystem.security.SecurityService;
 import ru.miraq.taskmanagementsystem.security.dto.AuthResponseDTO;
@@ -45,17 +44,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequestDTO authRequestDTO,
                                                @RequestParam RoleType role) {
-        try {
-            securityService.register(authRequestDTO, role);
-            return new ResponseEntity<>(ResponseMessageDTO.builder()
-                    .message("Регистрация прошла успешно")
-                    .build(), HttpStatus.OK);
-        } catch (CredentialsPatternException e){
-            return new ResponseEntity<>(ResponseMessageDTO.builder()
-                    .message(e.getMessage())
-                    .build()
-                    , HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        securityService.register(authRequestDTO, role);
+        return new ResponseEntity<>(ResponseMessageDTO.builder()
+                .message("Регистрация прошла успешно")
+                .build(), HttpStatus.OK);
     }
 
 
