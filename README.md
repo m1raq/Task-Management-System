@@ -9,7 +9,7 @@
 <h3 class="mb-2 mt-6 text-lg first:mt-3">Подъем dev-среды:</h3>
 <ol class="list-decimal marker:font-mono marker:text-sm pl-11">
 <li index="0"><h4>Клонировать репозиторий с проектом.</h4></li>
-<li index="1"><h4>Зайти в cmd и перейти в директорию проекта (для Windows команда </h4><span><code>cd [полный путь до директории]</code></span><span>).</span></li>
+<li index="1"><h4>Зайти в cmd и перейти в директорию проекта</h4><span><code>cd [полный путь до директории]</code></span><span>).</span></li>
 <li index="2"><h4>Собрать проект командой </h4><span><code>gradlew build</code></span><span>.</span></li>
 <li index="3"><h4>Выполнить команду </h4><span><code>docker-compose up --build</code></span><span> в директории проекта.</span></li>
 <li index="4"><h4>Подождать, пока контейнеры не будут запущены.</h4></li>
