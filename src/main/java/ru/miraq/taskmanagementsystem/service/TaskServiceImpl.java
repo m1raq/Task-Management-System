@@ -182,13 +182,15 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(taskMapper.toEntity(taskDTO));
     }
 
+
+
     @Override
     public List<GetTaskDTO> getTasksByEmail(String email, String sortType) {
-        if(existByName(email)){
+        if(!existByName(email)){
             throw new UsernameNotFoundException("Пользователь "  + email + " не найден");
         }
         if(sortType.equals("1")){
-            return taskRepository.findByAuthorEmail(email)
+            List<GetTaskDTO> tasks = taskRepository.findByAuthorEmail(email)
                     .orElseThrow(() -> {
                         log.error("Неуспешная попытка получения списка заданий по email {}.", email);
                         return new TaskNotFoundException("Задания не найдены");
@@ -204,6 +206,11 @@ public class TaskServiceImpl implements TaskService {
                             .commentDTO(getCommentsDTO(task))
                             .build()
                     ) .toList();
+
+            if(tasks.isEmpty()) {
+                throw new TaskNotFoundException("Список задач пуст");
+            }
+            return tasks;
         } else if(sortType.equals("2")){
             return getGetTaskDTOS(email);
         } else {
@@ -232,7 +239,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private List<GetTaskDTO> getGetTaskDTOS(String ownerEmail) {
-        return taskRepository.findByExecutorEmail(ownerEmail)
+        List<GetTaskDTO> tasks = taskRepository.findByExecutorEmail(ownerEmail)
                 .orElseThrow(() -> new TaskNotFoundException("Список заданий не найден"))
                 .stream()
                 .map(task -> GetTaskDTO.builder().name(task.getName())
@@ -248,8 +255,12 @@ public class TaskServiceImpl implements TaskService {
                                         .author(task.getAuthor().getEmail())
                                         .build())
                                 .toList())
-                .build())
+                        .build())
                 .toList();
+        if (tasks.isEmpty()){
+            throw new TaskNotFoundException("Список задач пуст");
+        }
+        return tasks;
     }
 
     private List<GetCommentDTO> getCommentsDTO(TaskEntity task){
